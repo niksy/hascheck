@@ -1,0 +1,27 @@
+{
+  "name": "hascheck",
+  "version": "0.0.0",
+  "description": "Interface to Hrvatski akademski spelling checker.",
+  "authors": [
+    "Ivan Nikolić"
+  ],
+  "license": "MIT",
+  "main": "dist/hascheck.min.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "src",
+    "Gruntfile.js",
+    "package.json"
+  ],
+  "dependencies": {
+    "jquery": ">=1"
+  },
+  "homepage": "https://github.com/niksy/hascheck",
+  "keywords": [
+    "hascheck"
+  ]
+}

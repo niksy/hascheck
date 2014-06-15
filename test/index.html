@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Hascheck</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+</head>
+<body>
+
+	<textarea name="text" id="text" cols="30" rows="5">podjelio sjeta ljepo s tobom sa tobom</textarea>
+	<button type="button" class="run">Run</button>
+
+	<button type="button" class="getErrors">getErrors</button>
+	<button type="button" class="getSuggestions">getSuggestions</button>
+
+	<script src="../bower_components/jquery/dist/jquery.min.js"></script>
+	<script src="../src/hascheck.js"></script>
+
+	<script>
+
+		$('.run').on('click', function ( e ) {
+
+			var text = $('#text').val();
+
+			hascheck
+				.check(text)
+				.done(function ( results ) {
+					if ( !+'\v1' ) {
+						alert(JSON.stringify(results, null, '\t'));
+					} else {
+						console.log( results );
+					}
+				});
+
+		});
+
+		$('.getErrors').on('click', function ( e ) {
+
+			hascheck.getErrors('ljepo', function ( errors ) {
+				if ( !+'\v1' ) {
+					alert(JSON.stringify(errors, null, '\t'));
+				} else {
+					console.log( 'errors' );
+					console.log( errors );
+				}
+			});
+
+			if ( !+'\v1' ) {
+				alert(JSON.stringify(hascheck.getErrors('ljepo'), null, '\t'));
+			} else {
+				console.log( hascheck.getErrors('ljepo') );
+			}
+
+		});
+
+		$('.getSuggestions').on('click', function ( e ) {
+
+			hascheck.getSuggestions('ljepo', function ( suggestions ) {
+				if ( !+'\v1' ) {
+					alert(JSON.stringify(suggestions, null, '\t'));
+				} else {
+					console.log( 'suggestions' );
+					console.log( suggestions );
+				}
+			});
+
+			if ( !+'\v1' ) {
+				alert(JSON.stringify(hascheck.getSuggestions('ljepo'), null, '\t'));
+			} else {
+				console.log( hascheck.getSuggestions('ljepo') );
+			}
+
+		});
+
+	</script>
+
+</body>
+</html>
