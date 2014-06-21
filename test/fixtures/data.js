@@ -19,6 +19,6 @@ var data = {
 	}
 };
 
-if (typeof(exports) === 'object') {
+if ( typeof(exports) === 'object' ) {
 	module.exports = data;
 }
