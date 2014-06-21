@@ -5,6 +5,10 @@ Interface to [Hrvatski akademski spelling checker](http://hacheck.tel.fer.hr/).
 ## Installation
 
 ```sh
+# Node
+npm install git://github.com/niksy/hascheck.git
+
+# Browser
 bower install niksy/hascheck
 ```
 
@@ -66,12 +70,12 @@ If there is no cached value for provided text, Hascheck will be called for resul
 // Node
 var hascheck = require('hascheck');
 
-// Require
+// Require.js
 define(['hascheck'], function ( hascheck ) {
 	// Code away
 });
 
-// Global
+// Global browser module
 window.hascheck;
 ```
 
