@@ -1,4 +1,4 @@
-/*! hascheck 0.2.2 - Interface to Hrvatski akademski spelling checker. | Author: Ivan Nikolić, 2014 | License: MIT */
+/*! hascheck 0.2.3 - Interface to Hrvatski akademski spelling checker. | Author: Ivan Nikolić, 2014 | License: MIT */
 ;(function ( root, factory ) {
 	if (typeof define === 'function' && define.amd) {
 		define(['jquery'], factory);
@@ -24,7 +24,7 @@
 		if ( !dfds[text] ) {
 			dfds[text] = {
 				dfd: $.Deferred(),
-				called: false
+				called: text === '' ? true : false
 			};
 		}
 		return dfds[text];
@@ -181,7 +181,7 @@
 			var resolvedDfd = resolveDfd(text);
 			var dfd = resolvedDfd.dfd;
 
-			if ( getCache(text).results ) {
+			if ( getCache(text).results || $.trim(text) === '' ) {
 
 				dfd.resolve( getCache(text).results );
 
