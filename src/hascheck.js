@@ -1,4 +1,12 @@
-;(function ( $, window, document, undefined ) {
+(function ( root, factory ) {
+	if (typeof define === 'function' && define.amd) {
+		define(['jquery'], factory);
+	} else if (typeof exports === 'object') {
+		module.exports = factory(require('jquery')(require('jsdom').jsdom().createWindow()));
+	} else {
+		root.hascheck = factory(jQuery, root, document);
+	}
+}(this, function ( $, window, document, undefined ) {
 
 	var cache = [];
 	var dfds = {};
@@ -126,6 +134,36 @@
 
 	}
 
+	/**
+	 * @param  {String}   type
+	 * @param  {String}   text
+	 * @param  {Function} cb
+	 *
+	 * @return {Array}
+	 */
+	function getData ( type, text, cb ) {
+		var arr = [];
+		var results = getCache(text).results || [];
+
+		if ( !results.length && cb ) {
+			this.check(text).done($.proxy(this[type === 'errors' ? 'getErrors' : 'getSuggestions'], this, text, cb));
+			return;
+		}
+
+		$.each(results, function ( index, result ) {
+			if ( type === 'errors' ) {
+				arr.push(result.suspicious);
+				return;
+			}
+			arr.push(result);
+		});
+
+		if ( cb ) {
+			cb.call(null, arr);
+		}
+		return arr;
+	}
+
 	function Hascheck () {}
 
 	$.extend(Hascheck.prototype, {
@@ -139,8 +177,8 @@
 		 */
 		check: function ( text ) {
 
-			var d = resolveDfd(text);
-			var dfd = d.dfd;
+			var resolvedDfd = resolveDfd(text);
+			var dfd = resolvedDfd.dfd;
 
 			if ( getCache(text).results ) {
 
@@ -148,19 +186,16 @@
 
 			} else {
 
-				if ( d.called ) {
+				if ( resolvedDfd.called ) {
 					return dfd.promise();
 				}
-				d.called = d.called || true;
+				resolvedDfd.called = resolvedDfd.called || true;
 
 				getRawData(text)
-				.done(function ( data ) {
-					setCache(text, processErrors(data));
-					dfd.resolve( getCache(text).results );
-				})
-				.fail(function () {
-					dfd.reject('No results.');
-				});
+					.done(function ( data ) {
+						setCache(text, processErrors(data));
+						dfd.resolve( getCache(text).results );
+					});
 
 			}
 
@@ -177,25 +212,7 @@
 		 * @return {Array}
 		 */
 		getErrors: function ( text, cb ) {
-			var errors = [];
-			var results = getCache(text).results || [];
-
-			if ( !results.length && cb ) {
-				if ( resolveDfd(text).called ) {
-					return;
-				}
-				this.check(text).done($.proxy(this.getErrors, this, text, cb));
-				return;
-			}
-
-			$.each(results, function ( index, result ) {
-				errors.push(result.suspicious);
-			});
-
-			if ( cb ) {
-				cb.call(null, errors);
-			}
-			return errors;
+			return getData.call(this, 'errors', text, cb);
 		},
 
 		/**
@@ -207,24 +224,11 @@
 		 * @return {Array}
 		 */
 		getSuggestions: function ( text, cb ) {
-			var suggestions = getCache(text).results || [];
-
-			if ( !suggestions.length && cb ) {
-				if ( resolveDfd(text).called ) {
-					return;
-				}
-				this.check(text).done($.proxy(this.getSuggestions, this, text, cb));
-				return;
-			}
-
-			if ( cb ) {
-				cb.call(null, suggestions);
-			}
-			return suggestions;
+			return getData.call(this, 'suggestions', text, cb);
 		}
 
 	});
 
-	window.hascheck = new Hascheck();
+	return new Hascheck();
 
-})( jQuery, window, document );
+}));

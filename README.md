@@ -1,4 +1,4 @@
-# Hascheck
+# hascheck
 
 Interface to [Hrvatski akademski spelling checker](http://hacheck.tel.fer.hr/).
 
@@ -10,13 +10,13 @@ bower install niksy/hascheck
 
 ## API
 
-### `hascheck.check(text)`
+### `check(text)`
 
 Returns: `Promise`
 
 Checks for errors and suggestions.
 
-### `hascheck.getErrors(text, [callback])`
+### `getErrors(text, [callback])`
 
 Returns: `Array`
 
@@ -30,12 +30,14 @@ Text which should be checked for errors.
 
 #### callback
 
-Type: `Function`
-Returns: ( [Suspicious words] )
+Type: `Function`  
+Returns: `Array`
 
-Callback to execute after text has been checked. If there is no cached value for provided text, Hascheck will be called for results and callback will be returned after successful request.
+Callback to execute after text has been checked. Returns list of suspicious words.
 
-### `hascheck.getSuggestions(text, [callback])`
+If there is no cached value for provided text, Hascheck will be called for results and callback will be returned after successful request.
+
+### `getSuggestions(text, [callback])`
 
 Returns: `Array`
 
@@ -49,26 +51,49 @@ Text which should be checked for errors.
 
 #### callback
 
-Type: `Function`
-Returns: ( [Suggestions] )
+Type: `Function`  
+Returns: `Array`
 
-Callback to execute after text has been checked. If there is no cached value for provided text, Hascheck will be called for results and callback will be returned after successful request.
+Callback to execute after text has been checked. Returns list of suggestions.
+
+If there is no cached value for provided text, Hascheck will be called for results and callback will be returned after successful request.
 
 ## Examples
 
+### Initalization
+
+```js
+// Node
+var hascheck = require('hascheck');
+
+// Require
+define(['hascheck'], function ( hascheck ) {
+	// Code away
+});
+
+// Global
+window.hascheck;
+```
+
+### Usage
+
 ```js
 hascheck.check('podjelio sjeta ljepo s tobom sa tobom').done(function ( results ) {
-	// [{suspicious:"ljepo", suggestions: ["lijepo", "ljeto"]}, …]
+	// [{suspicious:"ljepo",suggestions: ["lijepo","ljeto"]},…]
 });
 
-hascheck.getErrors('podjelio sjeta ljepo s tobom sa tobom'); // ["ljepo", "podjelio", "sa tobom"]
+hascheck.getErrors('podjelio sjeta ljepo s tobom sa tobom');
+	// ["ljepo","podjelio","sa tobom"]
+
 hascheck.getErrors('podjelio sjeta ljepo s tobom sa tobom', function ( errors ) {
-	// ["ljepo", "podjelio", "sa tobom"]
+	// ["ljepo","podjelio","sa tobom"]
 });
 
-hascheck.getSuggestions('podjelio sjeta ljepo s tobom sa tobom'); // [{suspicious:"ljepo", suggestions: ["lijepo", "ljeto"]}, …]
+hascheck.getSuggestions('podjelio sjeta ljepo s tobom sa tobom');
+	// [{suspicious:"ljepo",suggestions: ["lijepo", "ljeto"]},…]
+
 hascheck.getSuggestions('podjelio sjeta ljepo s tobom sa tobom', function ( suggestions ) {
-	// [{suspicious:"ljepo", suggestions: ["lijepo", "ljeto"]}, …]
+	// [{suspicious:"ljepo",suggestions: ["lijepo", "ljeto"]},…]
 });
 ```
 

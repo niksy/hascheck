@@ -4,9 +4,13 @@
   "description": "Interface to Hrvatski akademski spelling checker.",
   "author": "Ivan Nikolić",
   "license": "MIT",
-  "main": "Gruntfile.js",
+  "main": "src/hascheck.js",
   "directories": {
     "test": "test"
+  },
+  "dependencies": {
+    "jquery": "^2.1.1",
+    "jsdom": "^0.11.0"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
@@ -14,7 +18,8 @@
     "grunt-contrib-concat": "^0.4.0",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-uglify": "^0.4.0",
-    "grunt-jscs-checker": "^0.4.4"
+    "grunt-jscs-checker": "^0.4.4",
+    "should": "^4.0.4"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
