@@ -1,4 +1,4 @@
-/*! hascheck 0.2.1 - Interface to Hrvatski akademski spelling checker. | Author: Ivan Nikolić, 2014 | License: MIT */
+/*! hascheck 0.2.2 - Interface to Hrvatski akademski spelling checker. | Author: Ivan Nikolić, 2014 | License: MIT */
 ;(function ( root, factory ) {
 	if (typeof define === 'function' && define.amd) {
 		define(['jquery'], factory);
