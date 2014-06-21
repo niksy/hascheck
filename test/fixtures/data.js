@@ -1,4 +1,4 @@
-var data = {
+var fixture = {
 	check: {
 		yes: {
 			input: 'podjelio sjeta ljepo s tobom sa tobom',
@@ -19,6 +19,6 @@ var data = {
 	}
 };
 
-if ( typeof(exports) === 'object' ) {
-	module.exports = data;
+if (typeof exports === 'object') {
+	module.exports = fixture;
 }

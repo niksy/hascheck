@@ -23,7 +23,7 @@
 		if ( !dfds[text] ) {
 			dfds[text] = {
 				dfd: $.Deferred(),
-				called: false
+				called: text === '' ? true : false
 			};
 		}
 		return dfds[text];
@@ -180,7 +180,7 @@
 			var resolvedDfd = resolveDfd(text);
 			var dfd = resolvedDfd.dfd;
 
-			if ( getCache(text).results ) {
+			if ( getCache(text).results || $.trim(text) === '' ) {
 
 				dfd.resolve( getCache(text).results );
 

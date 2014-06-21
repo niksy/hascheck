@@ -1,6 +1,8 @@
-var should = require('should');
-var fixture = require('./fixtures/data');
-var hascheck = require('../src/hascheck');
+if (typeof exports === 'object') {
+	expect = require('expect.js');
+	fixture = require('./fixtures/data');
+	hascheck = require('../src/hascheck');
+}
 
 describe('check', function () {
 
@@ -8,9 +10,8 @@ describe('check', function () {
 
 	describe('promise', function () {
 
-		describe('done', function () {
+		describe('done with results', function () {
 			this.timeout(10000);
-
 			before(function ( done ) {
 				hascheck.check(fixture.check.yes.input)
 					.done(function ( errors ) {
@@ -20,13 +21,13 @@ describe('check', function () {
 			});
 
 			it('should return array', function () {
-				results.should.be.an.Array;
+				expect(results).to.be.an('array');
 			});
 			it('should have 3 errors', function () {
-				(results.length).should.equal(3);
+				expect(results).to.have.length(3);
 			});
 			it('should have 3 errors matching fixture output', function () {
-				results.should.eql(fixture.check.yes.output);
+				expect(results).to.eql(fixture.check.yes.output);
 			});
 		});
 
@@ -38,17 +39,17 @@ describe('check', function () {
 			});
 
 			it('should return promise', function () {
-				results.should.be.an.Object;
-				results.should.have.property('promise');
+				expect(results).to.be.an('object');
+				expect(results).have.property('promise');
 			});
 			it('should have 3 results returned from promise', function () {
 				results.done(function ( errors ) {
-					(errors.length).should.equal(3);
+					expect(errors).to.have.length(3);
 				});
 			});
 			it('should have 3 results returned from promise matching fixture output', function () {
 				results.done(function ( errors ) {
-					errors.should.eql(fixture.check.yes.output);
+					expect(errors).to.eql(fixture.check.yes.output);
 				});
 			});
 
@@ -56,7 +57,7 @@ describe('check', function () {
 
 	});
 
-	describe('fail', function () {
+	describe('done sans results', function () {
 
 		var noResults;
 
@@ -71,13 +72,13 @@ describe('check', function () {
 		});
 
 		it('should return array', function () {
-			noResults.should.be.an.Array;
+			expect(noResults).to.be.an('array');
 		});
 		it('should have 0 results', function () {
-			(noResults.length).should.equal(0);
+			expect(noResults).to.have.length(0);
 		});
 		it('should have 3 results matching fixture output', function () {
-			noResults.should.eql(fixture.check.no.output);
+			expect(noResults).to.eql(fixture.check.no.output);
 		});
 
 	});
@@ -100,13 +101,13 @@ describe('getErrors', function () {
 		});
 
 		it('should return array', function () {
-			results.should.be.an.Array;
+			expect(results).to.be.an('array');
 		});
 		it('should have 3 errors', function () {
-			(results.length).should.equal(3);
+			expect(results).to.have.length(3);
 		});
 		it('should have 3 errors matching fixture output', function () {
-			results.should.eql(fixture.getErrors.output);
+			expect(results).to.eql(fixture.getErrors.output);
 		});
 
 	});
@@ -119,13 +120,13 @@ describe('getErrors', function () {
 		});
 
 		it('should return array', function () {
-			results.should.be.an.Array;
+			expect(results).to.be.an('array');
 		});
 		it('should have 3 errors', function () {
-			(results.length).should.equal(3);
+			expect(results).to.have.length(3);
 		});
 		it('should have 3 errors matching fixture output', function () {
-			results.should.eql(fixture.getErrors.output);
+			expect(results).to.eql(fixture.getErrors.output);
 		});
 
 	});
@@ -148,13 +149,13 @@ describe('getSuggestions', function () {
 		});
 
 		it('should return array', function () {
-			results.should.be.an.Array;
+			expect(results).to.be.an('array');
 		});
 		it('should have 3 suggestions', function () {
-			(results.length).should.equal(3);
+			expect(results).to.have.length(3);
 		});
 		it('should have 3 suggestions matching fixture output', function () {
-			results.should.eql(fixture.getSuggestions.output);
+			expect(results).to.eql(fixture.getSuggestions.output);
 		});
 
 	});
@@ -167,13 +168,13 @@ describe('getSuggestions', function () {
 		});
 
 		it('should return array', function () {
-			results.should.be.an.Array;
+			expect(results).to.be.an('array');
 		});
 		it('should have 3 suggestions', function () {
-			(results.length).should.equal(3);
+			expect(results).to.have.length(3);
 		});
 		it('should have 3 suggestions matching fixture output', function () {
-			results.should.eql(fixture.getSuggestions.output);
+			expect(results).to.eql(fixture.getSuggestions.output);
 		});
 
 	});
@@ -181,13 +182,13 @@ describe('getSuggestions', function () {
 	describe('data', function () {
 
 		it('should have first suggestion with suspicious property "ljepo"', function () {
-			(results[0].suspicious).should.equal('ljepo');
+			expect(results[0].suspicious).to.equal('ljepo');
 		});
 		it('should have second suggestion with first suggestion "podijelio"', function () {
-			(results[1].suggestions[0]).should.eql("podijelio");
+			expect(results[1].suggestions[0]).to.equal('podijelio');
 		});
 		it('should have third suggestion with 1 suggestion', function () {
-			(results[2].suggestions.length).should.equal(1);
+			expect(results[2].suggestions).to.have.length(1);
 		});
 
 	});
