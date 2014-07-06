@@ -14,7 +14,7 @@
 	<button type="button" class="getSuggestions">getSuggestions</button>
 
 	<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
-	<script src="../../src/hascheck.js"></script>
+	<script src="../../src/out/hascheck.js?v=2"></script>
 
 	<script>
 
@@ -24,7 +24,7 @@
 
 			hascheck
 				.check(text)
-				.done(function ( results ) {
+				.then(function ( results ) {
 					if ( !+'\v1' ) {
 						alert(JSON.stringify(results, null, '\t'));
 					} else {

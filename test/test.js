@@ -1,8 +1,7 @@
-if (typeof exports === 'object') {
-	expect = require('expect.js');
-	fixture = require('./fixtures/data');
-	hascheck = require('../src/hascheck');
-}
+var expect = require('expect.js');
+var fixture = require('./fixtures/data');
+var hascheck = require('../src/hascheck');
+var Promise = require('es6-promise').Promise;
 
 describe('check', function () {
 
@@ -11,10 +10,12 @@ describe('check', function () {
 	describe('promise', function () {
 
 		describe('done with results', function () {
+
 			this.timeout(10000);
+
 			before(function ( done ) {
 				hascheck.check(fixture.check.yes.input)
-					.done(function ( errors ) {
+					.then(function ( errors ) {
 						results = errors;
 						done();
 					});
@@ -39,16 +40,15 @@ describe('check', function () {
 			});
 
 			it('should return promise', function () {
-				expect(results).to.be.an('object');
-				expect(results).have.property('promise');
+				expect(results).to.be.a(Promise);
 			});
 			it('should have 3 results returned from promise', function () {
-				results.done(function ( errors ) {
+				results.then(function ( errors ) {
 					expect(errors).to.have.length(3);
 				});
 			});
 			it('should have 3 results returned from promise matching fixture output', function () {
-				results.done(function ( errors ) {
+				results.then(function ( errors ) {
 					expect(errors).to.eql(fixture.check.yes.output);
 				});
 			});
@@ -65,7 +65,7 @@ describe('check', function () {
 
 		before(function ( done ) {
 			hascheck.check(fixture.check.no.input)
-				.done(function ( errors ) {
+				.then(function ( errors ) {
 					noResults = errors;
 					done();
 				});

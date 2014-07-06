@@ -1,4 +1,4 @@
-var fixture = {
+module.exports = {
 	check: {
 		yes: {
 			input: 'podjelio sjeta ljepo s tobom sa tobom',
@@ -18,7 +18,3 @@ var fixture = {
 		output: [{"suspicious":"ljepo","suggestions":["lijepo","ljeto"]},{"suspicious":"podjelio","suggestions":["podijelio","podjeli"]},{"suspicious":"sa tobom","suggestions":["s tobom"]}]
 	}
 };
-
-if (typeof exports === 'object') {
-	module.exports = fixture;
-}

@@ -5,25 +5,43 @@
   "author": "Ivan Nikolić",
   "license": "MIT",
   "main": "src/hascheck.js",
+  "browser": {
+    "xmlhttprequest": false
+  },
   "directories": {
     "test": "test"
   },
   "dependencies": {
-    "jquery": "^2.1.1",
-    "jsdom": "^0.11.0"
+    "component-bind": "^1.0.0",
+    "es6-promise": "^1.0.0",
+    "extend": "^1.3.0",
+    "foreach": "^2.0.4",
+    "qs": "^0.6.6",
+    "trim": "0.0.1",
+    "xhr": "^1.12.0",
+    "xmlhttprequest": "^1.6.0"
   },
   "devDependencies": {
+    "browserify": "^4.2.0",
     "expect.js": "^0.3.1",
     "grunt": "^0.4.5",
+    "grunt-browserify": "^2.1.3",
     "grunt-bump": "^0.0.13",
     "grunt-contrib-concat": "^0.4.0",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-uglify": "^0.4.0",
-    "grunt-jscs-checker": "^0.4.4",
+    "grunt-jscs": "^0.6.1",
+    "grunt-karma": "^0.8.3",
+    "grunt-mocha-test": "^0.11.0",
+    "karma": "^0.12.16",
+    "karma-chrome-launcher": "^0.1.4",
+    "karma-firefox-launcher": "^0.1.3",
+    "karma-ievms": "0.0.4",
+    "karma-mocha": "^0.1.4",
     "mocha": "^1.20.1"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "grunt test"
   },
   "repository": {
     "type": "git",
