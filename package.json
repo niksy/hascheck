@@ -1,6 +1,6 @@
 {
   "name": "hascheck",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Interface to Hrvatski akademski spelling checker.",
   "author": "Ivan Nikolić",
   "license": "MIT",
