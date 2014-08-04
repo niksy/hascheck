@@ -1,6 +1,5 @@
 var trim = require('trim');
 var each = require('foreach');
-var extend = require('extend');
 var bind = require('component-bind');
 var ajax = require('./lib/ajax');
 var Promise = require('es6-promise').Promise;

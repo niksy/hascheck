@@ -14,7 +14,6 @@
   "dependencies": {
     "component-bind": "^1.0.0",
     "es6-promise": "^1.0.0",
-    "extend": "^1.3.0",
     "foreach": "^2.0.4",
     "qs": "^0.6.6",
     "trim": "0.0.1",
