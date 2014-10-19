@@ -840,9 +840,9 @@ exports.colors = [
 ];
 
 /**
- * Currently only WebKit-based Web Inspectors and the Firebug
- * extension (*not* the built-in Firefox web inpector) are
- * known to support "%c" CSS customizations.
+ * Currently only WebKit-based Web Inspectors, Firefox >= v31,
+ * and the Firebug extension (any Firefox version) are known
+ * to support "%c" CSS customizations.
  *
  * TODO: add a `localStorage` variable to explicitly enable/disable colors
  */
@@ -851,7 +851,10 @@ function useColors() {
   // is webkit? http://stackoverflow.com/a/16459606/376773
   return ('WebkitAppearance' in document.documentElement.style) ||
     // is firebug? http://stackoverflow.com/a/398120/376773
-    (window.console && (console.firebug || (console.exception && console.table)));
+    (window.console && (console.firebug || (console.exception && console.table))) ||
+    // is firefox >= v31?
+    // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
+    (navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31);
 }
 
 /**
@@ -875,15 +878,15 @@ function formatArgs() {
 
   args[0] = (useColors ? '%c' : '')
     + this.namespace
-    + (useColors ? '%c ' : ' ')
+    + (useColors ? ' %c' : ' ')
     + args[0]
     + (useColors ? '%c ' : ' ')
     + '+' + exports.humanize(this.diff);
 
-  if (!useColors) return args
+  if (!useColors) return args;
 
   var c = 'color: ' + this.color;
-  args = [args[0], c, ''].concat(Array.prototype.slice.call(args, 1));
+  args = [args[0], c, 'color: inherit'].concat(Array.prototype.slice.call(args, 1));
 
   // the final "%c" is somewhat tricky, because there could be other
   // arguments passed either before or after the %c, so we need to
@@ -1073,7 +1076,7 @@ function debug(namespace) {
     if ('function' === typeof exports.formatArgs) {
       args = exports.formatArgs.apply(self, args);
     }
-    var logFn = exports.log || enabled.log || console.log.bind(console);
+    var logFn = enabled.log || exports.log || console.log.bind(console);
     logFn.apply(self, args);
   }
   enabled.enabled = true;
@@ -1101,7 +1104,7 @@ function enable(namespaces) {
 
   for (var i = 0; i < len; i++) {
     if (!split[i]) continue; // ignore empty strings
-    namespaces = split[i].replace('*', '.*?');
+    namespaces = split[i].replace(/\*/g, '.*?');
     if (namespaces[0] === '-') {
       exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
     } else {
@@ -1656,6 +1659,7 @@ exports.right = function(str){
 },{}],21:[function(_dereq_,module,exports){
 var window = _dereq_("global/window")
 var once = _dereq_("once")
+var parseHeaders = _dereq_('parse-headers')
 
 var messages = {
     "0": "Internal XMLHttpRequest Error",
@@ -1664,8 +1668,7 @@ var messages = {
 }
 
 var XHR = window.XMLHttpRequest || noop
-var XDR = "withCredentials" in (new XHR()) ?
-        window.XMLHttpRequest : window.XDomainRequest
+var XDR = "withCredentials" in (new XHR()) ? XHR : window.XDomainRequest
 
 module.exports = createXHR
 
@@ -1679,19 +1682,22 @@ function createXHR(options, callback) {
 
     var xhr = options.xhr || null
 
-    if (!xhr && options.cors) {
-        xhr = new XDR()
-    } else if (!xhr) {
-        xhr = new XHR()
+    if (!xhr) {
+        if (options.cors || options.useXDR) {
+            xhr = new XDR()
+        }else{
+            xhr = new XHR()
+        }
     }
 
-    var uri = xhr.url = options.uri || options.url;
+    var uri = xhr.url = options.uri || options.url
     var method = xhr.method = options.method || "GET"
     var body = options.body || options.data
     var headers = xhr.headers = options.headers || {}
     var sync = !!options.sync
     var isJson = false
     var key
+    var load = options.response ? loadResponse : loadXhr
 
     if ("json" in options) {
         isJson = true
@@ -1712,8 +1718,8 @@ function createXHR(options, callback) {
     // hate IE
     xhr.ontimeout = noop
     xhr.open(method, uri, !sync)
-
-    if (options.cors && options.withCredentials !== false) {
+                                    //backward compatibility
+    if (options.withCredentials || (options.cors && options.withCredentials !== false)) {
         xhr.withCredentials = true
     }
 
@@ -1728,6 +1734,8 @@ function createXHR(options, callback) {
                 xhr.setRequestHeader(key, headers[key])
             }
         }
+    } else if (options.headers) {
+        throw new Error("Headers cannot be set on an XDomainRequest object")
     }
 
     if ("responseType" in options) {
@@ -1750,37 +1758,72 @@ function createXHR(options, callback) {
         }
     }
 
-    function load() {
-        var error = null
-        var status = xhr.statusCode = xhr.status
+    function getBody() {
         // Chrome with requestType=blob throws errors arround when even testing access to responseText
         var body = null
 
         if (xhr.response) {
-            body = xhr.body = xhr.response
+            body = xhr.response
         } else if (xhr.responseType === 'text' || !xhr.responseType) {
-            body = xhr.body = xhr.responseText || xhr.responseXML
-        }
-
-        if (status === 1223) {
-            status = 204
-        }
-
-        if (status === 0 || (status >= 400 && status < 600)) {
-            var message = (typeof body === "string" ? body : false) ||
-                messages[String(xhr.status).charAt(0)]
-            error = new Error(message)
-
-            error.statusCode = xhr.status
+            body = xhr.responseText || xhr.responseXML
         }
 
         if (isJson) {
             try {
-                body = xhr.body = JSON.parse(body)
+                body = JSON.parse(body)
             } catch (e) {}
         }
 
-        callback(error, xhr, body)
+        return body
+    }
+
+    function getStatusCode() {
+        return xhr.status === 1223 ? 204 : xhr.status
+    }
+
+    // if we're getting a none-ok statusCode, build & return an error
+    function errorFromStatusCode(status) {
+        var error = null
+        if (status === 0 || (status >= 400 && status < 600)) {
+            var message = (typeof body === "string" ? body : false) ||
+                messages[String(status).charAt(0)]
+            error = new Error(message)
+            error.statusCode = status
+        }
+
+        return error
+    }
+
+    // will load the data & process the response in a special response object
+    function loadResponse() {
+        var status = getStatusCode()
+        var error = errorFromStatusCode(status)
+        var response = {
+            body: getBody(),
+            statusCode: status,
+            statusText: xhr.statusText,
+            raw: xhr
+        }
+        if(xhr.getAllResponseHeaders){ //remember xhr can in fact be XDR for CORS in IE
+            response.headers = parseHeaders(xhr.getAllResponseHeaders())
+        } else {
+            response.headers = {}
+        }
+
+        callback(error, response, response.body)
+    }
+
+    // will load the data and add some response properties to the source xhr
+    // and then respond with that
+    function loadXhr() {
+        var status = getStatusCode()
+        var error = errorFromStatusCode(status)
+
+        xhr.status = xhr.statusCode = status
+        xhr.body = getBody()
+        xhr.headers = parseHeaders(xhr.getAllResponseHeaders())
+
+        callback(error, xhr, xhr.body)
     }
 
     function error(evt) {
@@ -1791,14 +1834,16 @@ function createXHR(options, callback) {
 
 function noop() {}
 
-},{"global/window":22,"once":23}],22:[function(_dereq_,module,exports){
+},{"global/window":22,"once":23,"parse-headers":26}],22:[function(_dereq_,module,exports){
 (function (global){
 if (typeof window !== "undefined") {
-    module.exports = window
+    module.exports = window;
 } else if (typeof global !== "undefined") {
-    module.exports = global
+    module.exports = global;
+} else if (typeof self !== "undefined"){
+    module.exports = self;
 } else {
-    module.exports = {}
+    module.exports = {};
 }
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
@@ -1824,6 +1869,103 @@ function once (fn) {
 }
 
 },{}],24:[function(_dereq_,module,exports){
+var isFunction = _dereq_('is-function')
+
+module.exports = forEach
+
+var toString = Object.prototype.toString
+var hasOwnProperty = Object.prototype.hasOwnProperty
+
+function forEach(list, iterator, context) {
+    if (!isFunction(iterator)) {
+        throw new TypeError('iterator must be a function')
+    }
+
+    if (arguments.length < 3) {
+        context = this
+    }
+    
+    if (toString.call(list) === '[object Array]')
+        forEachArray(list, iterator, context)
+    else if (typeof list === 'string')
+        forEachString(list, iterator, context)
+    else
+        forEachObject(list, iterator, context)
+}
+
+function forEachArray(array, iterator, context) {
+    for (var i = 0, len = array.length; i < len; i++) {
+        if (hasOwnProperty.call(array, i)) {
+            iterator.call(context, array[i], i, array)
+        }
+    }
+}
+
+function forEachString(string, iterator, context) {
+    for (var i = 0, len = string.length; i < len; i++) {
+        // no such thing as a sparse string.
+        iterator.call(context, string.charAt(i), i, string)
+    }
+}
+
+function forEachObject(object, iterator, context) {
+    for (var k in object) {
+        if (hasOwnProperty.call(object, k)) {
+            iterator.call(context, object[k], k, object)
+        }
+    }
+}
+
+},{"is-function":25}],25:[function(_dereq_,module,exports){
+module.exports = isFunction
+
+var toString = Object.prototype.toString
+
+function isFunction (fn) {
+  var string = toString.call(fn)
+  return string === '[object Function]' ||
+    (typeof fn === 'function' && string !== '[object RegExp]') ||
+    (typeof window !== 'undefined' &&
+     // IE8 and below
+     (fn === window.setTimeout ||
+      fn === window.alert ||
+      fn === window.confirm ||
+      fn === window.prompt))
+};
+
+},{}],26:[function(_dereq_,module,exports){
+var trim = _dereq_('trim')
+  , forEach = _dereq_('for-each')
+  , isArray = function(arg) {
+      return Object.prototype.toString.call(arg) === '[object Array]';
+    }
+
+module.exports = function (headers) {
+  if (!headers)
+    return {}
+
+  var result = {}
+
+  forEach(
+      trim(headers).split('\n')
+    , function (row) {
+        var index = row.indexOf(':')
+          , key = trim(row.slice(0, index)).toLowerCase()
+          , value = trim(row.slice(index + 1))
+
+        if (typeof(result[key]) === 'undefined') {
+          result[key] = value
+        } else if (isArray(result[key])) {
+          result[key].push(value)
+        } else {
+          result[key] = [ result[key], value ]
+        }
+      }
+  )
+
+  return result
+}
+},{"for-each":24,"trim":20}],27:[function(_dereq_,module,exports){
 var trim = _dereq_('trim');
 var each = _dereq_('foreach');
 var bind = _dereq_('component-bind');
@@ -2046,7 +2188,7 @@ var api = {
 
 module.exports = api;
 
-},{"./lib/ajax":25,"component-bind":3,"es6-promise":4,"foreach":14,"trim":20}],25:[function(_dereq_,module,exports){
+},{"./lib/ajax":28,"component-bind":3,"es6-promise":4,"foreach":14,"trim":20}],28:[function(_dereq_,module,exports){
 (function (global){
 // Patch global object with XMLHttpRequest since server environment doesn’t have necessary support
 global.XMLHttpRequest = global.XMLHttpRequest || _dereq_('xmlhttprequest').XMLHttpRequest;
@@ -2118,6 +2260,6 @@ function start ( text, cb ) {
 module.exports = start;
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"jsonp":15,"qs":19,"trim":20,"xhr":21,"xmlhttprequest":1}]},{},[24])
-(24)
+},{"jsonp":15,"qs":19,"trim":20,"xhr":21,"xmlhttprequest":1}]},{},[27])
+(27)
 });
