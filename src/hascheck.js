@@ -121,7 +121,7 @@ var api = {
 
 		if ( getCache(text).results || trim(text) === '' || value.called ) {
 
-			cb.call(this, getCache(text).results || []);
+			cb(getCache(text).results || []);
 
 		} else {
 
@@ -129,7 +129,7 @@ var api = {
 
 			ajax(text, function ( data ) {
 				setCache(text, processErrors(data));
-				cb.call(this, getCache(text).results);
+				cb(getCache(text).results);
 			});
 
 		}

@@ -48,7 +48,7 @@ function start ( text, cb ) {
 	if ( '\v'=='v' ) {
 
 		jsonp(url(text), {}, function ( err, data ) {
-			cb.call(this, data);
+			cb(data);
 		});
 
 	} else {
@@ -58,7 +58,7 @@ function start ( text, cb ) {
 			method: 'get',
 			timeout: 10000
 		}, function ( err, resp, body ) {
-			cb.call(this, JSON.parse(jsonEscape(body)));
+			cb(JSON.parse(jsonEscape(body)));
 		});
 
 	}
