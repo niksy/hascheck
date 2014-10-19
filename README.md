@@ -14,53 +14,22 @@ bower install niksy/hascheck
 
 ## API
 
-### `check(text)`
-
-Returns: `Promise`
+### `hascheck(text, cb)`
 
 Checks for errors and suggestions.
 
-### `getErrors(text, [callback])`
-
-Returns: `Array`
-
-Returns array of errors (suspicious words).
-
-#### text
+#### `text`
 
 Type: `String`
 
-Text which should be checked for errors.
+String to check.
 
-#### callback
+#### `cb`
 
-Type: `Function`  
-Returns: `Array`
+Type: `Function`
+Arguments: [List of errors and suggestions]
 
-Callback to execute after text has been checked. Returns list of suspicious words.
-
-If there is no cached value for provided text, Hascheck will be called for results and callback will be returned after successful request.
-
-### `getSuggestions(text, [callback])`
-
-Returns: `Array`
-
-Returns array of suggestions (with suspicious words).
-
-#### text
-
-Type: `String`
-
-Text which should be checked for errors.
-
-#### callback
-
-Type: `Function`  
-Returns: `Array`
-
-Callback to execute after text has been checked. Returns list of suggestions.
-
-If there is no cached value for provided text, Hascheck will be called for results and callback will be returned after successful request.
+Callback to execute after text has been checked.
 
 ## Examples
 
@@ -82,22 +51,8 @@ window.hascheck;
 ### Usage
 
 ```js
-hascheck.check('podjelio sjeta ljepo s tobom sa tobom').done(function ( results ) {
+hascheck('podjelio sjeta ljepo s tobom sa tobom').done(function ( results ) {
 	// [{suspicious:"ljepo",suggestions: ["lijepo","ljeto"]},…]
-});
-
-hascheck.getErrors('podjelio sjeta ljepo s tobom sa tobom');
-	// ["ljepo","podjelio","sa tobom"]
-
-hascheck.getErrors('podjelio sjeta ljepo s tobom sa tobom', function ( errors ) {
-	// ["ljepo","podjelio","sa tobom"]
-});
-
-hascheck.getSuggestions('podjelio sjeta ljepo s tobom sa tobom');
-	// [{suspicious:"ljepo",suggestions: ["lijepo", "ljeto"]},…]
-
-hascheck.getSuggestions('podjelio sjeta ljepo s tobom sa tobom', function ( suggestions ) {
-	// [{suspicious:"ljepo",suggestions: ["lijepo", "ljeto"]},…]
 });
 ```
 

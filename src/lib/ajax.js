@@ -58,7 +58,7 @@ function start ( text, cb ) {
 			method: 'get',
 			timeout: 10000
 		}, function ( err, resp, body ) {
-			cb.call(null, JSON.parse(jsonEscape(body)));
+			cb.call(this, JSON.parse(jsonEscape(body)));
 		});
 
 	}

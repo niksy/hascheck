@@ -10,11 +10,8 @@
 	<textarea name="text" id="text" cols="30" rows="5">podjelio sjeta ljepo s tobom sa tobom</textarea>
 	<button type="button" class="run">Run</button>
 
-	<button type="button" class="getErrors">getErrors</button>
-	<button type="button" class="getSuggestions">getSuggestions</button>
-
 	<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
-	<script src="../../src/out/hascheck.js?v=2"></script>
+	<script src="../../src/out/hascheck.js"></script>
 
 	<script>
 
@@ -22,53 +19,13 @@
 
 			var text = $('#text').val();
 
-			hascheck
-				.check(text)
-				.then(function ( results ) {
-					if ( !+'\v1' ) {
-						alert(JSON.stringify(results, null, '\t'));
-					} else {
-						console.log( results );
-					}
-				});
-
-		});
-
-		$('.getErrors').on('click', function ( e ) {
-
-			hascheck.getErrors('ljepo', function ( errors ) {
+			hascheck(text, function ( results ) {
 				if ( !+'\v1' ) {
-					alert(JSON.stringify(errors, null, '\t'));
+					alert(JSON.stringify(results, null, '\t'));
 				} else {
-					console.log( 'errors' );
-					console.log( errors );
+					console.log( results );
 				}
 			});
-
-			if ( !+'\v1' ) {
-				alert(JSON.stringify(hascheck.getErrors('ljepo'), null, '\t'));
-			} else {
-				console.log( hascheck.getErrors('ljepo') );
-			}
-
-		});
-
-		$('.getSuggestions').on('click', function ( e ) {
-
-			hascheck.getSuggestions('ljepo', function ( suggestions ) {
-				if ( !+'\v1' ) {
-					alert(JSON.stringify(suggestions, null, '\t'));
-				} else {
-					console.log( 'suggestions' );
-					console.log( suggestions );
-				}
-			});
-
-			if ( !+'\v1' ) {
-				alert(JSON.stringify(hascheck.getSuggestions('ljepo'), null, '\t'));
-			} else {
-				console.log( hascheck.getSuggestions('ljepo') );
-			}
 
 		});
 

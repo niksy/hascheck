@@ -81,7 +81,9 @@ module.exports = function ( grunt ) {
 				}
 			},
 			test: {
-				'test/out/test.js': ['test/test.js']
+				files: {
+					'test/out/test.js': ['test/test.js']
+				}
 			},
 			watch: {
 				options: {
@@ -111,14 +113,7 @@ module.exports = function ( grunt ) {
 
 	});
 
-	grunt.loadNpmTasks('grunt-contrib-jshint');
-	grunt.loadNpmTasks('grunt-jscs');
-	grunt.loadNpmTasks('grunt-contrib-concat');
-	grunt.loadNpmTasks('grunt-contrib-uglify');
-	grunt.loadNpmTasks('grunt-bump');
-	grunt.loadNpmTasks('grunt-browserify');
-	grunt.loadNpmTasks('grunt-karma');
-	grunt.loadNpmTasks('grunt-mocha-test');
+	require('load-grunt-tasks')(grunt);
 
 	grunt.registerTask('stylecheck', ['jshint:main', 'jscs:main']);
 	grunt.registerTask('default', ['browserify:dist','concat:dist', 'uglify:dist']);
