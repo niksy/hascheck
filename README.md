@@ -26,7 +26,7 @@ String to check.
 
 #### `cb`
 
-Type: `Function`
+Type: `Function`  
 Arguments: [List of errors and suggestions]
 
 Callback to execute after text has been checked.
