@@ -51,7 +51,7 @@ window.hascheck;
 ### Usage
 
 ```js
-hascheck('podjelio sjeta ljepo s tobom sa tobom').done(function ( results ) {
+hascheck('podjelio sjeta ljepo s tobom sa tobom', function ( results ) {
 	// [{suspicious:"ljepo",suggestions: ["lijepo","ljeto"]},…]
 });
 ```
