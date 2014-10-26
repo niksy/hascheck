@@ -20,10 +20,10 @@ describe('call', function () {
 		it('should return array', function () {
 			expect(results).to.be.an('array');
 		});
-		it('should have 3 errors', function () {
-			expect(results).to.have.length(3);
+		it('should have 7 errors', function () {
+			expect(results).to.have.length(7);
 		});
-		it('should have 3 errors matching fixture output', function () {
+		it('should have errors matching fixture output', function () {
 			expect(results).to.eql(fixture.check.yes.output);
 		});
 	});
@@ -37,10 +37,10 @@ describe('call', function () {
 			});
 		});
 
-		it('should have 3 results returned from cache', function () {
-			expect(results).to.have.length(3);
+		it('should have 7 results returned from cache', function () {
+			expect(results).to.have.length(7);
 		});
-		it('should have 3 results returned from cache matching fixture output', function () {
+		it('should have results returned from cache matching fixture output', function () {
 			expect(results).to.eql(fixture.check.yes.output);
 		});
 
@@ -65,7 +65,7 @@ describe('call', function () {
 		it('should have 0 results', function () {
 			expect(noResults).to.have.length(0);
 		});
-		it('should have 3 results matching fixture output', function () {
+		it('should have results matching fixture output', function () {
 			expect(noResults).to.eql(fixture.check.no.output);
 		});
 

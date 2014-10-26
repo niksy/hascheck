@@ -1,5 +1,5 @@
 // Return list of suggestions
-hascheck('podjelio sjeta ljepo', function () {});
+hascheck('podjelio ljepo čovijek sumljam počmem s tobom sa tobom kuča', function () {});
 
 // Cache
 var cache = [
