@@ -5,10 +5,10 @@ Interface to [Hrvatski akademski spelling checker](http://hacheck.tel.fer.hr/).
 ## Installation
 
 ```sh
-# Node
-npm install git://github.com/niksy/hascheck.git
+# NPM
+npm install hascheck
 
-# Browser
+# Bower
 bower install niksy/hascheck
 ```
 
