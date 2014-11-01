@@ -1,10 +1,14 @@
 var request = require('xhr');
 var url = require('./url');
 
-var CORS_PROXIES = ['http://cors.corsproxy.io?url=', 'http://www.corsproxy.com/'];
+var SECURE_CORS_PROXIES = ['//www.corsproxy.com/'];
+var CORS_PROXIES        = ['//cors.corsproxy.io?url='].concat(SECURE_CORS_PROXIES);
+var proxies             = /^https:\/\//.test(location.href) ? SECURE_CORS_PROXIES : CORS_PROXIES;
 
 function getUrl ( text ) {
-	var proxy = CORS_PROXIES[Math.floor(Math.random()*CORS_PROXIES.length)] + url(text);
+
+	var proxy = proxies[Math.floor(Math.random()*proxies.length)] + url(text);
+
 	if ( /corsproxy\.com/.test(proxy) ) {
 		proxy = proxy.replace(/http:\/\/(?=hacheck)/,'');
 	}
