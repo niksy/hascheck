@@ -1,4 +1,4 @@
-/*! hascheck 0.4.4 - Interface to Hrvatski akademski spelling checker. | Author: Ivan Nikolić, 2014 | License: MIT */
+/*! hascheck 0.4.5 - Interface to Hrvatski akademski spelling checker. | Author: Ivan Nikolić, 2014 | License: MIT */
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.hascheck=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
 var hasOwn = Object.prototype.hasOwnProperty;
@@ -752,10 +752,14 @@ module.exports = function ( result ) {
 var request = require('xhr');
 var url = require('./url');
 
-var CORS_PROXIES = ['http://cors.corsproxy.io?url=', 'http://www.corsproxy.com/'];
+var SECURE_CORS_PROXIES = ['//www.corsproxy.com/'];
+var CORS_PROXIES        = ['//cors.corsproxy.io?url='].concat(SECURE_CORS_PROXIES);
+var proxies             = /^https:\/\//.test(location.href) ? SECURE_CORS_PROXIES : CORS_PROXIES;
 
 function getUrl ( text ) {
-	var proxy = CORS_PROXIES[Math.floor(Math.random()*CORS_PROXIES.length)] + url(text);
+
+	var proxy = proxies[Math.floor(Math.random()*proxies.length)] + url(text);
+
 	if ( /corsproxy\.com/.test(proxy) ) {
 		proxy = proxy.replace(/http:\/\/(?=hacheck)/,'');
 	}
