@@ -15,7 +15,7 @@ module.exports = function ( result ) {
 	each(errors, function ( error, index ) {
 		normalized.push({
 			suspicious: error.suspicious,
-			suggestions: toarray(error.suggestions.word)
+			suggestions: error.suggestions ? toarray(error.suggestions.word) : []
 		});
 	});
 
