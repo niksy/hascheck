@@ -1,5 +1,13 @@
-/*! hascheck 0.4.5 - Interface to Hrvatski akademski spelling checker. | Author: Ivan Nikolić, 2014 | License: MIT */
+/*! hascheck 0.4.6 - Interface to Hrvatski akademski spelling checker. | Author: Ivan Nikolić, 2014 | License: MIT */
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.hascheck=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+module.exports = function(arr, obj){
+  if (arr.indexOf) return arr.indexOf(obj);
+  for (var i = 0; i < arr.length; ++i) {
+    if (arr[i] === obj) return i;
+  }
+  return -1;
+};
+},{}],2:[function(require,module,exports){
 
 var hasOwn = Object.prototype.hasOwnProperty;
 var toString = Object.prototype.toString;
@@ -23,7 +31,7 @@ module.exports = function forEach (obj, fn, ctx) {
 };
 
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 /*
 xml2json v 1.1
 copyright 2005-2007 Thomas Frank
@@ -305,12 +313,12 @@ xml2json = {
 module.exports.xml2obj = function (xmlcode, ignoretags, debug) {
     return xml2json.parser(xmlcode, ignoretags, debug);
 };
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 module.exports = function(item) {
   if(item === undefined)  return [];
   return Object.prototype.toString.call(item) === "[object Array]" ? item : [item];
 }
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 
 exports = module.exports = trim;
 
@@ -326,7 +334,7 @@ exports.right = function(str){
   return str.replace(/\s*$/, '');
 };
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var window = require("global/window")
 var once = require("once")
 var parseHeaders = require('parse-headers')
@@ -504,7 +512,7 @@ function createXHR(options, callback) {
 
 function noop() {}
 
-},{"global/window":6,"once":7,"parse-headers":10}],6:[function(require,module,exports){
+},{"global/window":7,"once":8,"parse-headers":11}],7:[function(require,module,exports){
 (function (global){
 if (typeof window !== "undefined") {
     module.exports = window;
@@ -517,7 +525,7 @@ if (typeof window !== "undefined") {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 module.exports = once
 
 once.proto = once(function () {
@@ -538,7 +546,7 @@ function once (fn) {
   }
 }
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var isFunction = require('is-function')
 
 module.exports = forEach
@@ -586,7 +594,7 @@ function forEachObject(object, iterator, context) {
     }
 }
 
-},{"is-function":9}],9:[function(require,module,exports){
+},{"is-function":10}],10:[function(require,module,exports){
 module.exports = isFunction
 
 var toString = Object.prototype.toString
@@ -603,7 +611,7 @@ function isFunction (fn) {
       fn === window.prompt))
 };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var trim = require('trim')
   , forEach = require('for-each')
   , isArray = function(arg) {
@@ -635,7 +643,7 @@ module.exports = function (headers) {
 
   return result
 }
-},{"for-each":8,"trim":4}],11:[function(require,module,exports){
+},{"for-each":9,"trim":5}],12:[function(require,module,exports){
 var trim = require('trim');
 var each = require('foreach');
 var toarray = require('toarray');
@@ -693,7 +701,56 @@ module.exports = {
 	set: set
 };
 
-},{"foreach":1,"toarray":3,"trim":4}],12:[function(require,module,exports){
+},{"foreach":2,"toarray":4,"trim":5}],13:[function(require,module,exports){
+var indexOf = require('component-indexof');
+var services;
+
+var CAN_SET_HEADERS             = !('XDomainRequest' in window);
+var IS_SECURE_CONNECTION        = /^https:\/\//.test(location.href);
+var SECURE_CORS_PROXIES         = ['//www.corsproxy.com/'];
+var SECURE_CORS_PROXIES_HEADERS = ['//cors-anywhere.herokuapp.com/'];
+var CORS_PROXIES                = ['//cors.corsproxy.io?url='];
+
+function getHeaders ( service ) {
+	if ( indexOf(SECURE_CORS_PROXIES_HEADERS, service) === -1 || !CAN_SET_HEADERS ) {
+		return false;
+	}
+	return {
+		'X-Requested-With': 'XMLHttpRequest'
+	};
+}
+
+function getServices () {
+	var arr = [].concat(SECURE_CORS_PROXIES);
+	if ( CAN_SET_HEADERS ) {
+		arr = arr.concat(SECURE_CORS_PROXIES_HEADERS);
+	}
+	if ( !IS_SECURE_CONNECTION ) {
+		arr = arr.concat(CORS_PROXIES);
+	}
+	return arr;
+}
+
+function getUrl ( service, url ) {
+	var finalUrl = service + url;
+	if ( /corsproxy\.com/.test(finalUrl) ) {
+		finalUrl = finalUrl.replace(/corsproxy\.com\/https?:\/\//,'corsproxy.com/');
+	}
+	return finalUrl;
+}
+
+function getService ( url ) {
+	services = services || getServices();
+	var service = services[Math.floor(Math.random()*services.length)];
+	return {
+		url: getUrl(service, url),
+		headers: getHeaders(service)
+	};
+}
+
+module.exports = getService;
+
+},{"component-indexof":1}],14:[function(require,module,exports){
 var toarray = require('toarray');
 var trim = require('trim');
 var each = require('foreach');
@@ -722,7 +779,7 @@ module.exports = function ( text, cb ) {
 
 };
 
-},{"./cache":11,"./parse":13,"./request":14,"foreach":1,"toarray":3,"trim":4}],13:[function(require,module,exports){
+},{"./cache":12,"./parse":15,"./request":16,"foreach":2,"toarray":4,"trim":5}],15:[function(require,module,exports){
 var toarray = require('toarray');
 var parse = require('nodexml/xml2obj').xml2obj;
 var each = require('foreach');
@@ -740,7 +797,7 @@ module.exports = function ( result ) {
 	each(errors, function ( error, index ) {
 		normalized.push({
 			suspicious: error.suspicious,
-			suggestions: toarray(error.suggestions.word)
+			suggestions: error.suggestions ? toarray(error.suggestions.word) : []
 		});
 	});
 
@@ -748,44 +805,34 @@ module.exports = function ( result ) {
 
 };
 
-},{"foreach":1,"nodexml/xml2obj":2,"toarray":3}],14:[function(require,module,exports){
+},{"foreach":2,"nodexml/xml2obj":3,"toarray":4}],16:[function(require,module,exports){
 var request = require('xhr');
 var url = require('./url');
-
-var SECURE_CORS_PROXIES = ['//www.corsproxy.com/'];
-var CORS_PROXIES        = ['//cors.corsproxy.io?url='].concat(SECURE_CORS_PROXIES);
-var proxies             = /^https:\/\//.test(location.href) ? SECURE_CORS_PROXIES : CORS_PROXIES;
-
-function getUrl ( text ) {
-
-	var proxy = proxies[Math.floor(Math.random()*proxies.length)] + url(text);
-
-	if ( /corsproxy\.com/.test(proxy) ) {
-		proxy = proxy.replace(/http:\/\/(?=hacheck)/,'');
-	}
-	return proxy;
-}
+var corsService = require('./cors-service');
 
 module.exports = function ( text, cb ) {
 
+	var service = corsService(url(text));
+
 	request({
-		url: getUrl(text),
+		url: service.url,
 		method: 'get',
 		timeout: 10000,
 		useXDR: true,
-		response: true
+		response: true,
+		headers: service.headers
 	}, function ( err, resp, body ) {
 		cb(body);
 	});
 
 };
 
-},{"./url":15,"xhr":5}],15:[function(require,module,exports){
+},{"./cors-service":13,"./url":17,"xhr":6}],17:[function(require,module,exports){
 var trim = require('trim');
 
 module.exports = function ( text ) {
 	return 'http://hacheck.tel.fer.hr/xml.pl?textarea=' + encodeURIComponent(trim(text));
 };
 
-},{"trim":4}]},{},[12])(12)
+},{"trim":5}]},{},[14])(14)
 });
