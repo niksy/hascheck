@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<hacheck>
+	<request fixPunctuation="no" commonErrors="no" contextual="on">
+		<user id="f3286c38-578c-409a-b3bd-0be08da4b982" newUser="no"/>
+		<text length="9"/>
+		<content type="input">
+		</content>
+	</request>
+
+	<results errors="1">
+		<error occurrences="1" severity="xx">
+			<position>0</position>
+			<length>9</length>
+			<suspicious>čovijekkk</suspicious>
+		</error>
+	</results>
+	<time>3.969849</time>
+	<orig>
+-xx- ~ovijekkk 1
+	</orig>
+</hacheck>

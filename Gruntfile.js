@@ -103,11 +103,14 @@ module.exports = function ( grunt ) {
 		},
 
 		mochaTest: {
+			options: {
+				reporter: 'spec'
+			},
 			unit: {
-				options: {
-					reporter: 'spec'
-				},
 				src: ['test/test.js']
+			},
+			parse: {
+				src: ['test/parse.js']
 			}
 		}
 

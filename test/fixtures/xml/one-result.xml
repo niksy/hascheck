@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<hacheck>
+	<request fixPunctuation="no" commonErrors="no" contextual="on">
+		<user id="f3286c38-578c-409a-b3bd-0be08da4b982" newUser="no"/>
+		<text length="7"/>
+		<content type="input">
+		</content>
+	</request>
+
+	<results errors="1">
+		<error occurrences="1" severity="mm">
+			<position>0</position>
+			<length>7</length>
+			<suspicious>čovijek</suspicious>
+			<suggestions>
+				<word>čovjek</word>
+				<word>dovijek</word>
+			</suggestions>
+		</error>
+	</results>
+	<time>3.69752</time>
+	<orig>
+-mm- ~ovijek 1 => ~ovjek? dovijek?
+	</orig>
+</hacheck>

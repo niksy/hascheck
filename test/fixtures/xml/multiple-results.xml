@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<hacheck>
+	<request fixPunctuation="no" commonErrors="no" contextual="on">
+		<user id="c15c7aac-88e9-4eae-b560-9dcc466ad54e" newUser="yes"/>
+		<text length="23"/>
+		<content type="input">
+		</content>
+	</request>
+
+	<results errors="3">
+		<error occurrences="1" severity="mm">
+			<position>9</position>
+			<length>5</length>
+			<suspicious>ljepo</suspicious>
+			<suggestions>
+				<word>lijepo</word>
+				<word>ljeto</word>
+			</suggestions>
+		</error>
+		<error occurrences="1" severity="ss">
+			<position>0</position>
+			<length>8</length>
+			<suspicious>podjelio</suspicious>
+			<suggestions>
+				<word>podijelio</word>
+				<word>podjeli</word>
+			</suggestions>
+		</error>
+		<error occurrences="1" severity="GG">
+			<position>15</position>
+			<length>8</length>
+			<suspicious>sa tobom</suspicious>
+			<suggestions>
+				<word>s tobom</word>
+			</suggestions>
+		</error>
+	</results>
+	<time>3.821079</time>
+	<orig>
+-mm- ljepo 1 => lijepo? ljeto?
+-ss- podjelio 1 => podijelio? podjeli?
+-GG- sa#tobom 1 => s tobom?
+	</orig>
+</hacheck>
